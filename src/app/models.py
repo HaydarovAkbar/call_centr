@@ -27,7 +27,7 @@ class Appeal(Base):
     done = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return self.phone_number
 
     class Meta:
         verbose_name = 'Appeal'
