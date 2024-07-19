@@ -49,7 +49,7 @@ INSTALLED_APPS += [
     "rest_framework_simplejwt.token_blacklist",
     'drf_yasg',
     'axes',
-    'corsheaders'
+    'corsheaders',
     'rest_framework',
 ]
 
@@ -186,6 +186,8 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 MEDIA_URL = 'media/'
+
+STATIC_URL = 'static/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 

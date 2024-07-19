@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from utils.models import Base
-from phonenumber_field.modelfields import PhoneNumberField
 
 User = get_user_model()
 

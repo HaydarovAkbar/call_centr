@@ -12,7 +12,7 @@ class LogInSerializer(TokenObtainPairSerializer):
         attrs['is_superuser'] = self.user.is_superuser
         if self.user.is_superuser:
             attrs["groups"] = [group.name for group in self.user.groups.all()]
-            attrs["permissions"] = [permission.codename for permission in self.user.groups.first().permissions.all()]
+            # attrs["permissions"] = [permission.codename for permission in self.user.groups.first().permissions.all()]
         return attrs
 
     class Meta:
