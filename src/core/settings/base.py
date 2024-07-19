@@ -51,6 +51,7 @@ INSTALLED_APPS += [
     'axes',
     'corsheaders',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

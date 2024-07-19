@@ -1,12 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from utils.models import Base
+from utils.models import Base, Region, District
 
 User = get_user_model()
 
 
 class Appeal(Base):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appeals', null=True, blank=True)
     app_name = models.CharField(help_text='Murojaatchi FISH', max_length=255, blank=True, null=True)
     phone_number = models.CharField(
         help_text='Phone number',
@@ -21,6 +21,10 @@ class Appeal(Base):
     text = models.TextField(null=True, blank=True)
 
     voice = models.FileField(upload_to='appeals/', blank=True, null=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
+    district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
+
+    done = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -38,5 +42,3 @@ class Appeal(Base):
         if self.voice:
             return self.voice.url
         return None
-
-

@@ -25,3 +25,6 @@ class District(Base):
 
     def __str__(self):
         return self.title
+
+    def get_region_name(self):
+        return self.region.title
