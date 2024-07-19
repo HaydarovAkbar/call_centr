@@ -22,4 +22,12 @@ class AppealCreateView(CreateAPIView):
     serializer_class = AppealCreateSerializer
     # permission_classes = [IsAuthenticated, IsCallCenter]
     http_method_names = ['post', ]
-    parser_classes = [MultiPartParser, FormParser, FileUploadParser] # JSONParser
+    parser_classes = [MultiPartParser, FormParser, FileUploadParser]  # JSONParser
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated:
+            request.data['user'] = user.id
+            return super().create(request, *args, **kwargs)
+        else:
+            return Response(status=403)
