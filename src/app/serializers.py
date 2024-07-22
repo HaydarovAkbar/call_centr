@@ -1,12 +1,20 @@
 from rest_framework import serializers
 
 from .models import Appeal
+from django.contrib.auth.models import User
 
 
 class AppealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appeal
         fields = '__all__'
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['district_title'] = instance.district.title if instance.district else None
+        response['region_title'] = instance.region.title if instance.region else None
+        response['user_title'] = instance.user.first_name if instance.user else None
+        return response
 
 
 class AppealCreateSerializer(serializers.ModelSerializer):

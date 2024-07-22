@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import AppealSerializer, AppealCreateSerializer
 from .models import Appeal
 from .permissions import IsCallCenter
+from .pagination import TenPagination
 
 
 class AppealListView(ListAPIView):
@@ -18,6 +19,7 @@ class AppealListView(ListAPIView):
     filterset_fields = ['user', 'phone_number', 'district', 'region']
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', ]
+    pagination_class = TenPagination
 
 
 class AppealCreateView(CreateAPIView):
@@ -25,6 +27,7 @@ class AppealCreateView(CreateAPIView):
     serializer_class = AppealCreateSerializer
     permission_classes = [IsCallCenter, IsAuthenticated]
     http_method_names = ['post', ]
+
     # parser_classes = [MultiPartParser, FormParser, FileUploadParser]  # JSONParser
 
     def create(self, request, *args, **kwargs):
