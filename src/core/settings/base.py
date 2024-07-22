@@ -30,6 +30,36 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+INSTALLED_APPS = [
+    'jazzmin',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+
+INSTALLED_APPS += [
+    'app',
+    'utils',
+    'phonenumber_field',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    "rest_framework_simplejwt.token_blacklist",
+    'drf_yasg',
+    'axes',
+    'corsheaders',
+    'rest_framework',
+    'django_filters',
+    # 'django.contrib.sites',
+    # 'allauth',
+    # 'allauth.account',
+    # 'rest_auth.registration',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.twitter',
+]
 # INSTALLED_APPS = [
 #     'jazzmin',
 #     'django.contrib.admin',
@@ -38,9 +68,6 @@ ALLOWED_HOSTS = ['*']
 #     'django.contrib.sessions',
 #     'django.contrib.messages',
 #     'django.contrib.staticfiles',
-# ]
-#
-# INSTALLED_APPS += [
 #     'app',
 #     'utils',
 #     'phonenumber_field',
@@ -55,47 +82,20 @@ ALLOWED_HOSTS = ['*']
 #     'django.contrib.sites',
 #     'allauth',
 #     'allauth.account',
-#     # 'rest_auth.registration',
 #     'allauth.socialaccount',
 #     'allauth.socialaccount.providers.facebook',
 #     'allauth.socialaccount.providers.twitter',
 # ]
-INSTALLED_APPS = [
-    'jazzmin',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'app',
-    'utils',
-    'phonenumber_field',
-    'rest_framework.authtoken',
-    'rest_framework_simplejwt',
-    "rest_framework_simplejwt.token_blacklist",
-    'drf_yasg',
-    'axes',
-    'corsheaders',
-    'rest_framework',
-    'django_filters',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.twitter',
-]
-INSTALLED_APPS += [
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.twitter',
-]
-
-SITE_ID = 1
+# INSTALLED_APPS += [
+#     'django.contrib.sites',
+#     'allauth',
+#     'allauth.account',
+#     'allauth.socialaccount',
+#     'allauth.socialaccount.providers.facebook',
+#     'allauth.socialaccount.providers.twitter',
+# ]
+#
+# SITE_ID = 1
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -108,7 +108,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
+    # 'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
