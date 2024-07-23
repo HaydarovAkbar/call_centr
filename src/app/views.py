@@ -10,12 +10,16 @@ from .serializers import AppealSerializer, AppealCreateSerializer
 from .models import Appeal
 from .permissions import IsCallCenter
 from .pagination import TenPagination
+from .filters import AppealDatetimeFilters
+
+
+
 
 
 class AppealListView(ListAPIView):
     queryset = Appeal.objects.all()
     serializer_class = AppealSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, AppealDatetimeFilters]
     filterset_fields = ['user', 'phone_number', 'district', 'region']
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', ]
