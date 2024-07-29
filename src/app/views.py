@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser, FileUploadParser
@@ -11,9 +10,6 @@ from .models import Appeal
 from .permissions import IsCallCenter
 from .pagination import TenPagination
 from .filters import AppealDatetimeFilters
-
-
-
 
 
 class AppealListView(ListAPIView):
