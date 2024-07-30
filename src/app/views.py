@@ -28,7 +28,7 @@ class AppealCreateView(CreateAPIView):
     permission_classes = [IsCallCenter, IsAuthenticated]
     http_method_names = ['post', ]
 
-    # parser_classes = [MultiPartParser, FormParser, FileUploadParser]  # JSONParser
+    parser_classes = [MultiPartParser, FormParser, FileUploadParser]  # JSONParser
 
     def create(self, request, *args, **kwargs):
         user = request.user
@@ -48,3 +48,15 @@ class AppealUpdateView(UpdateAPIView):
     serializer_class = AppealCreateSerializer
     # permission_classes = [IsAuthenticated, IsCallCenter]
     http_method_names = ['patch', ]
+
+
+class ImportAppealView(CreateAPIView):
+    queryset = Appeal.objects.all()
+    serializer_class = AppealCreateSerializer
+    permission_classes = [IsCallCenter, IsAuthenticated]
+    http_method_names = ['post', ]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        request.data['user'] = user.id
+        return super().create(request, *args, **kwargs)

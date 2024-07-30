@@ -19,3 +19,6 @@ class UserListView(ListAPIView):
     queryset = serializers.User.objects.all()
     serializer_class = serializers.UserSerializers
     http_method_names = ['get', ]
+
+    def get_queryset(self):
+        return self.queryset.filter(groups__name='call_center')

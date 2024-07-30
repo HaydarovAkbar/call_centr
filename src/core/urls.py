@@ -14,13 +14,14 @@ from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include(account_urls)),
-    path('utils/', include(utils_urls)),
-    path('app/', include(app_urls)),
+    path('api/auth/', include(account_urls)),
+    path('api/utils/', include(utils_urls)),
+    path('api/app/', include(app_urls)),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static('/api' + settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static('/api' + settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # if settings.DEBUG:
 #     urlpatterns += [

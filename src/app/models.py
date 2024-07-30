@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from utils.models import Base, Region, District
+from django.conf import settings
 
 User = get_user_model()
 
@@ -40,5 +41,5 @@ class Appeal(Base):
 
     def get_voice_url(self):
         if self.voice:
-            return self.voice.url
+            return settings.HOST + self.voice.url
         return None
