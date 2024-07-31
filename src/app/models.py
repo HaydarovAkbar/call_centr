@@ -43,3 +43,17 @@ class Appeal(Base):
         if self.voice:
             return settings.HOST + self.voice.url
         return None
+
+
+class FAQ(Base):
+    title = models.CharField(max_length=255, blank=True, null=True)
+    question = models.TextField(blank=True, null=True)
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Frequently Asked Question'
+        verbose_name_plural = 'Frequently Asked Questions'
+        db_table = 'faq'
+
+    def __str__(self):
+        return self.question

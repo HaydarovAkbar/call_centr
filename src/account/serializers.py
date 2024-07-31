@@ -23,3 +23,8 @@ class UserSerializers(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name']
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['full_name'] = instance.first_name + " " + instance.last_name
+        return response
