@@ -4,9 +4,11 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser, File
 from rest_framework.response import Response
 import openpyxl as px
 from django.http import FileResponse
+from django.db.models import Count
 import os
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
+import datetime
 
 from .serializers import AppealSerializer, AppealCreateSerializer, FAQSerializer
 from .models import Appeal, FAQ
@@ -76,7 +78,7 @@ class ImportAppealView(ListAPIView):
         book = px.load_workbook(excel_path)
         wb = book.get_sheet_by_name('book')
         # wb.cell(3, 10,
-        #         f'{now().date().year} yil {now().date().day} may soat {now().hour}:{now().strftime("%M")} holatiga')
+        #         f'{now().date().year} yil {now().date().day} may hour {now().hour}:{now().strftime("%M")} holatiga')
         row, count = 4, 1
         for query in filter_queryset:
             wb.cell(row, 2, str(count))
@@ -91,3 +93,35 @@ class ImportAppealView(ListAPIView):
             count += 1
         book.save(f"static\data.xlsx")
         return FileResponse(open('static\data.xlsx', 'rb'))
+
+
+class StatsAppealView(ListAPIView):
+    queryset = Appeal.objects.all()
+    serializer_class = AppealSerializer
+    filter_backends = [DjangoFilterBackend, AppealDatetimeFilters]
+    filterset_fields = ['user', 'phone_number', 'district', 'region', 'faq']
+    http_method_names = ['get', ]
+
+    def list(self, request, *args, **kwargs):
+        filter_queryset = self.filter_queryset(self.get_queryset())
+        data = {'count': filter_queryset.count()}
+
+        # top 5 appeals by region and faq
+        data['top_region'] = filter_queryset.values('region__title').annotate(
+            count=Count('region')).order_by('-count')[:5]
+        data['top_faq'] = filter_queryset.values('faq__title').annotate(
+            count=Count('faq')).order_by('-count')[:5]
+
+        daily = {}
+
+        # 1 week of statistics is needed, daily appeal number should be released
+        for date in range(7):
+            date = datetime.datetime.now() - datetime.timedelta(days=date)
+            daily[date.strftime('%Y-%m-%d')] = filter_queryset.filter(app_datetime__date=date).count()
+        data['daily'] = daily
+
+        # top 5 appeals by user
+        data['top_user'] = filter_queryset.values('user__first_name', 'user__last_name').annotate(
+            count=Count('user')).order_by('-count')[:5]
+
+        return Response(data)
