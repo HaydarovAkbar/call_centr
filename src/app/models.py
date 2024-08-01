@@ -24,8 +24,7 @@ class Appeal(Base):
     voice = models.FileField(upload_to='appeals/', blank=True, null=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
     district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
-
-    done = models.CharField(max_length=255, blank=True, null=True)
+    faq = models.ForeignKey('FAQ', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.phone_number

@@ -187,7 +187,6 @@ LOGGING = {
             'propagate': True,
         },
     },
-
 }
 
 # Database
