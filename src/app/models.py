@@ -15,7 +15,7 @@ class Appeal(Base):
         blank=True,
         null=True,
     )
-    app_datetime = models.DateTimeField(auto_now_add=True)
+    app_datetime = models.DateTimeField(null=True, blank=True)
     result = models.CharField(max_length=255, blank=True, null=True)
     is_resolved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
