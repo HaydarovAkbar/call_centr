@@ -112,13 +112,18 @@ class StatsAppealView(ListAPIView):
         data['top_faq'] = filter_queryset.values('faq__title').annotate(
             count=Count('faq')).order_by('-count')[:5]
 
-        daily = {}
+        # daily = {}
 
-        # 1 week of statistics is needed, daily appeal number should be released
+        row, table = list(), list()
         for date in range(7):
             date = datetime.datetime.now() - datetime.timedelta(days=date)
-            daily[date.strftime('%Y-%m-%d')] = filter_queryset.filter(app_datetime__date=date).count()
-        data['daily'] = daily
+            # daily[date.strftime('%Y-%m-%d')] = filter_queryset.filter(app_datetime__date=date).count()
+            row.append(date.strftime('%Y-%m-%d'))
+            table.append(filter_queryset.filter(app_datetime__date=date).count())
+        data['daily'] = {
+            'row': row[::-1],
+            'data': data[::-1]
+        }
 
         # top 5 appeals by user
         data['top_user'] = filter_queryset.values('user__first_name', 'user__last_name').annotate(
