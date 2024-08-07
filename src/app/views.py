@@ -8,10 +8,12 @@ from django.db.models import Count
 import os
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
+from django.contrib.auth.models import User
 import datetime
 
-from .serializers import AppealSerializer, AppealCreateSerializer, FAQSerializer
-from .models import Appeal, FAQ
+from .serializers import AppealSerializer, AppealCreateSerializer, FAQSerializer, ChangeAppealStatusSerializers, \
+    StatusSerializer
+from .models import Appeal, FAQ, Status
 from .permissions import IsCallCenter
 from .pagination import TenPagination
 from .filters import AppealDatetimeFilters
@@ -21,7 +23,7 @@ class AppealListView(ListAPIView):
     queryset = Appeal.objects.all().order_by('-id')
     serializer_class = AppealSerializer
     filter_backends = [DjangoFilterBackend, AppealDatetimeFilters]
-    filterset_fields = ['user', 'phone_number', 'district', 'region']
+    filterset_fields = ['user', 'phone_number', 'district', 'region', 'status']
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', ]
     pagination_class = TenPagination
@@ -119,11 +121,48 @@ class StatsAppealView(ListAPIView):
             table.append(filter_queryset.filter(app_datetime__date=date).count())
         data['daily'] = {
             'row': row[::-1],
-            'data': data[::-1]
+            'data': table[::-1]
         }
 
         # top 5 appeals by user
         data['top_user'] = filter_queryset.values('user__first_name', 'user__last_name').annotate(
             count=Count('user')).order_by('-count')[:5]
+        # top 5 appeals by status
+        data['top_status'] = filter_queryset.values('status__title').annotate(
+            count=Count('status')).order_by('-count')[:5]
+        data['top_answers'] = filter_queryset.values('answers__title').annotate(
+            count=Count('answers')).order_by('-count')
 
+        # How many times each user has talked should be displayed in the status section
+        charts = {}
+        # filter user if group in call center
+        users = User.objects.filter(groups__name='call_center')
+        for user in users:
+            user_fullname = user.first_name + ' ' + user.last_name
+            # filter queryset by status and user
+            user_queryset = filter_queryset.filter(user=user)
+            d = []
+            for status in Status.objects.all():
+                d.append({
+                    'status': status.title,
+                    'count': user_queryset.filter(status=status).count()
+                })
+            charts[user_fullname] = d
+        data['charts'] = charts
         return Response(data)
+
+
+class StatusListView(ListAPIView):
+    queryset = Status.objects.all().order_by('order')
+    serializer_class = StatusSerializer
+    http_method_names = ['get', ]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title', ]
+    permission_classes = [IsAuthenticated, ]
+
+
+class ChangeAppealStatusView(UpdateAPIView):
+    queryset = Appeal.objects.all()
+    serializer_class = ChangeAppealStatusSerializers
+    permission_classes = [IsAuthenticated, IsCallCenter]
+    http_method_names = ['patch', 'put', ]

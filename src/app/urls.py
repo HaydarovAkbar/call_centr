@@ -1,4 +1,5 @@
-from .views import AppealListView, AppealCreateView, AppealRetrieveView, AppealUpdateView, ImportAppealView, FAQListView, StatsAppealView
+from .views import AppealListView, AppealCreateView, AppealRetrieveView, AppealUpdateView, ImportAppealView, \
+    FAQListView, StatsAppealView, ChangeAppealStatusView, StatusListView
 
 from django.urls import path
 
@@ -10,4 +11,6 @@ urlpatterns = [
     path('faqs/', FAQListView.as_view(), name='faq-list'),
     path('appeals/import/', ImportAppealView.as_view(), name='appeal-import'),
     path('stats/', StatsAppealView.as_view(), name='stats'),
+    path('status/', StatusListView.as_view(), name='status-list'),
+    path('status/<int:pk>/', ChangeAppealStatusView.as_view(), name='status-change'),
 ]

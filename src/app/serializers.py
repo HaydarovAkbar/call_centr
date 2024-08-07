@@ -41,3 +41,9 @@ class StatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Status
         fields = ('id', 'title')
+
+
+class ChangeAppealStatusSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Appeal
+        fields = ('id', 'status')
