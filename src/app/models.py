@@ -25,6 +25,8 @@ class Appeal(Base):
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True, blank=True)
     district = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
     faq = models.ForeignKey('FAQ', on_delete=models.SET_NULL, null=True, blank=True)
+    answers = models.ForeignKey('Answers', on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.ForeignKey('Status', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.phone_number
@@ -56,3 +58,30 @@ class FAQ(Base):
 
     def __str__(self):
         return self.question
+
+
+class Answers(Base):
+    title = models.CharField(max_length=255, blank=True, null=True)
+    question = models.TextField(blank=True, null=True)
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Answer'
+        verbose_name_plural = 'Answers'
+        db_table = 'answers'
+
+    def __str__(self):
+        return self.title
+
+
+class Status(Base):
+    title = models.CharField(max_length=255, blank=True, null=True)
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Status'
+        verbose_name_plural = 'Statuses'
+        db_table = 'status'
+
+    def __str__(self):
+        return self.title
