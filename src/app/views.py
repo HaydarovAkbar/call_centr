@@ -12,8 +12,8 @@ from django.contrib.auth.models import User
 import datetime
 
 from .serializers import AppealSerializer, AppealCreateSerializer, FAQSerializer, ChangeAppealStatusSerializers, \
-    StatusSerializer
-from .models import Appeal, FAQ, Status
+    StatusSerializer, AnswersSerializer
+from .models import Appeal, FAQ, Status, Answers
 from .permissions import IsCallCenter
 from .pagination import TenPagination
 from .filters import AppealDatetimeFilters
@@ -166,3 +166,12 @@ class ChangeAppealStatusView(UpdateAPIView):
     serializer_class = ChangeAppealStatusSerializers
     permission_classes = [IsAuthenticated, IsCallCenter]
     http_method_names = ['patch', 'put', ]
+
+
+class AnswersListView(ListAPIView):
+    queryset = Answers.objects.all().order_by('order')
+    serializer_class = AnswersSerializer
+    http_method_names = ['get', ]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title', 'question']
+    permission_classes = [IsAuthenticated, ]
