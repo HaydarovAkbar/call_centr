@@ -21,7 +21,7 @@ class AppealSerializer(serializers.ModelSerializer):
 class AppealCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appeal
-        fields = ('app_name', 'app_datetime', 'result', 'text', 'done', 'phone_number', 'district', 'region', 'voice',
+        fields = ('app_name', 'app_datetime', 'result', 'text', 'phone_number', 'district', 'region', 'voice',
                   'is_active', 'is_resolved', 'created_at', 'user', 'faq', 'answers', 'status')
 
 
