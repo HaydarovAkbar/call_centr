@@ -106,32 +106,43 @@ class StatsAppealView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         filter_queryset = self.filter_queryset(self.get_queryset())
-        data = {'count': filter_queryset.count()}
+        data = {'count': self.filter_queryset(self.get_queryset()).count()}
 
         # top 5 appeals by region and faq
-        data['top_region'] = filter_queryset.values('region__title').annotate(
+        data['top_region'] = self.filter_queryset(self.get_queryset()).values('region__title').annotate(
             count=Count('region')).order_by('-count')[:5]
-        data['top_faq'] = filter_queryset.values('faq__title').annotate(
+        data['top_faq'] = self.filter_queryset(self.get_queryset()).values('faq__title').annotate(
             count=Count('faq')).order_by('-count')[:5]
 
         row, table = list(), list()
         for date in range(7):
             date = datetime.datetime.now() - datetime.timedelta(days=date)
             row.append(date.strftime('%Y-%m-%d'))
-            table.append(filter_queryset.filter(app_datetime__date=date).count())
+            table.append(self.filter_queryset(self.get_queryset()).filter(app_datetime__date=date).count())
         data['daily'] = {
             'row': row[::-1],
             'data': table[::-1]
         }
 
         # top 5 appeals by user
-        data['top_user'] = filter_queryset.values('user__first_name', 'user__last_name').annotate(
+        data['top_user'] = self.filter_queryset(self.get_queryset()).values('user__first_name', 'user__last_name').annotate(
             count=Count('user')).order_by('-count')[:5]
         # top 5 appeals by status
-        data['top_status'] = filter_queryset.values('status__title').annotate(
+        data['top_status'] = self.filter_queryset(self.get_queryset()).values('status__title').annotate(
             count=Count('status')).order_by('-count')[:5]
-        data['top_answers'] = filter_queryset.values('answers__title').annotate(
+        data['top_answers'] = self.filter_queryset(self.get_queryset()).values('answers__title').annotate(
+            count=Count('answers')).order_by('-count')[:5]
+        top_answers = self.filter_queryset(self.get_queryset()).values('answers').annotate(
             count=Count('answers')).order_by('-count')
+        i = 0
+        # for top_ans in top_answers:
+        #     for status in Status.objects.all():
+        #         # top_ans[status.title] = self.filter_queryset(self.get_queryset()).filter(answers=top_ans['answers'],
+        #         #                                                                          status=status).count()
+        #         data['top_answers'][i][status.title] = self.filter_queryset(self.get_queryset()).filter(answers=top_ans['answers'],
+            # i += 1
+        # answer_stat = {}
+        # data['top_answers_stats'] = answer_stat
 
         # How many times each user has talked should be displayed in the status section
         charts = {}
@@ -140,7 +151,7 @@ class StatsAppealView(ListAPIView):
         for user in users:
             user_fullname = user.first_name + ' ' + user.last_name
             # filter queryset by status and user
-            user_queryset = filter_queryset.filter(user=user)
+            user_queryset = self.filter_queryset(self.get_queryset()).filter(user=user)
             d = []
             for status in Status.objects.all():
                 d.append({
