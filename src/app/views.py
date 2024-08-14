@@ -89,7 +89,10 @@ class ImportAppealView(ListAPIView):
             wb.cell(row, 5, query.app_name)
             wb.cell(row, 6, query.phone_number)
             wb.cell(row, 7, (query.user.first_name + ' ' + query.user.last_name) if query.user else None)
-            wb.cell(row, 8, query.app_datetime.strftime('%Y-%m-%d %H:%M:%S'))
+            try:
+                wb.cell(row, 8, query.app_datetime.strftime('%Y-%m-%d %H:%M:%S'))
+            except Exception:
+                wb.cell(row, 8, None)
             wb.cell(row, 9, query.get_voice_url() if query.voice else None)
             row += 1
             count += 1
@@ -105,7 +108,6 @@ class StatsAppealView(ListAPIView):
     http_method_names = ['get', ]
 
     def list(self, request, *args, **kwargs):
-        filter_queryset = self.filter_queryset(self.get_queryset())
         data = {'count': self.filter_queryset(self.get_queryset()).count()}
 
         # top 5 appeals by region and faq
@@ -125,7 +127,8 @@ class StatsAppealView(ListAPIView):
         }
 
         # top 5 appeals by user
-        data['top_user'] = self.filter_queryset(self.get_queryset()).values('user__first_name', 'user__last_name').annotate(
+        data['top_user'] = self.filter_queryset(self.get_queryset()).values('user__first_name',
+                                                                            'user__last_name').annotate(
             count=Count('user')).order_by('-count')[:5]
         # top 5 appeals by status
         data['top_status'] = self.filter_queryset(self.get_queryset()).values('status__title').annotate(
@@ -133,17 +136,21 @@ class StatsAppealView(ListAPIView):
         data['top_answers'] = self.filter_queryset(self.get_queryset()).values('answers__title').annotate(
             count=Count('answers')).order_by('-count')[:5]
         top_answers = self.filter_queryset(self.get_queryset()).values('answers').annotate(
-            count=Count('answers')).order_by('-count')
-        i = 0
-        # for top_ans in top_answers:
-        #     for status in Status.objects.all():
-        #         # top_ans[status.title] = self.filter_queryset(self.get_queryset()).filter(answers=top_ans['answers'],
-        #         #                                                                          status=status).count()
-        #         data['top_answers'][i][status.title] = self.filter_queryset(self.get_queryset()).filter(answers=top_ans['answers'],
-            # i += 1
-        # answer_stat = {}
-        # data['top_answers_stats'] = answer_stat
-
+            count=Count('answers')).order_by('-count')[:5]
+        i, j = 0, list()
+        for top_ans in top_answers:
+            ans = list()
+            r_queryset = self.filter_queryset(self.get_queryset()).filter(answers=top_ans['answers'])
+            for status in Status.objects.all():
+                ans.append({
+                    'status': status.title,
+                    'count': r_queryset.filter(status=status).count()}
+                )
+            top_answers_data = data['top_answers'][i]
+            top_answers_data['stats'] = ans
+            j.append(top_answers_data)
+            i += 1
+        data['top_answers'] = j
         # How many times each user has talked should be displayed in the status section
         charts = {}
         # filter user if group in call center
